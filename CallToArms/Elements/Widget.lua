@@ -58,14 +58,14 @@ function CTA:UpdateQueueIndicators()
 		if self:IsQueued(Header.ID) then
 			Header.QueueFadeOut:Stop()
 
-			if not Header.QueueFadeIn:IsPlaying() then
+			if (not Header.QueueFadeIn:IsPlaying()) then
 				Header.QueuedOverlay:Show()
 				Header.QueueFadeIn:Play()
 			end
 		else
 			Header.QueueFadeIn:Stop()
 
-			if not Header.QueueFadeOut:IsPlaying() then
+			if (not Header.QueueFadeOut:IsPlaying()) then
 				Header.QueueFadeOut:Play()
 			end
 		end
@@ -206,47 +206,51 @@ function CTA:CreateHeaderFrame(name)
 end
 
 function CTA:SetHeaderVisible(header, visible)
-	if visible and not header.Visible then
+	if (visible and not header.Visible) then
 		header.Visible = true
 		header:Show()
 		header.FadeIn:Play()
-	elseif not visible and header.Visible then
+	elseif (not visible and header.Visible) then
 		header.Visible = false
 		header.FadeOut:Play()
 	end
 end
 
 function CTA:SetHeaderPositionAnimated(header, point, relativeTo, relativePoint, x, y)
-	if header == relativeTo then return end
+	if (header == relativeTo) then
+		return
+	end
 
 	-- Temporarily snap to new position to get target coords
 	header:ClearAllPoints()
 	header:SetPoint(point, relativeTo, relativePoint, x, y)
-	local newX, newY = header:GetLeft(), header:GetTop()
 
-	if not newX or not newY then
+	local NewX, NewY = header:GetLeft(), header:GetTop()
+
+	if (not NewX or not NewY) then
 		-- Fallback to just anchoring if coordinates are missing
 		header:ClearAllPoints()
 		header:SetPoint(point, relativeTo, relativePoint, x, y)
+
 		return
 	end
 
 	-- Try getting old position
-	local oldX, oldY = header.oldX, header.oldY
+	local OldX, OldY = header.OldX, header.OldY
 
 	-- Default to no animation if this is the very first time
-	if not oldX or not oldY then
-		oldX, oldY = newX, newY
+	if (not OldX or not OldY) then
+		OldX, OldY = NewX, NewY
 	end
 
 	-- Reset to old screen space position
 	header:ClearAllPoints()
-	header:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", oldX, oldY)
+	header:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", OldX, OldY)
 
-	local dx = newX - oldX
-	local dy = newY - oldY
+	local DX = NewX - OldX
+	local DY = NewY - OldY
 
-	header.Move:SetOffset(dx, dy)
+	header.Move:SetOffset(DX, DY)
 	header.Move:Stop()
 	header.Move:Play()
 
@@ -257,8 +261,8 @@ function CTA:SetHeaderPositionAnimated(header, point, relativeTo, relativePoint,
 	end)
 
 	-- Save for next time
-	header.oldX = newX
-	header.oldY = newY
+	header.OldX = NewX
+	header.OldY = NewY
 end
 
 function CTA:SortQueueHeaders()
@@ -267,6 +271,7 @@ function CTA:SortQueueHeaders()
 
 	-- Gather headers in a flat list for sorting
 	local Headers = {}
+
 	for _, Header in pairs(self.InstanceData) do
 		if Header.Visible then
 			table.insert(Headers, Header)
@@ -405,8 +410,7 @@ function CTA:ToggleWidget()
 		return
 	end
 
-	-- Toggle the player's preference rather than the frame's current state. The
-	-- frame may already be hidden temporarily by the group visibility setting.
+	-- Toggle the player's preference rather than the frame's current state. The frame may already be hidden temporarily by the group visibility setting.
 	self.WidgetVisible = not self.WidgetVisible
 	self.WidgetHiddenInGroup = false
 
@@ -428,21 +432,20 @@ function CTA:UpdateGroupVisibility()
 
 	local HideForGroup = self.Settings.HideInGroup and (IsInGroup() or IsInRaid())
 
-	if HideForGroup and self.WidgetVisible then
+	if (HideForGroup and self.WidgetVisible) then
 		if Widget:IsShown() then
 			Widget:Hide()
 		end
 
 		self.WidgetHiddenInGroup = true
 	elseif self.WidgetHiddenInGroup then
-		-- Only undo a hide performed by this setting. A widget the player closed
-		-- manually should remain closed when leaving a group or disabling it.
+		-- Only undo a hide performed by this setting. A widget the player closed manually should remain closed when leaving a group or disabling it.
 		self.WidgetHiddenInGroup = false
 
 		if self.WidgetVisible then
 			Widget:Show()
 		end
-	elseif not self.WidgetVisible and Widget:IsShown() then
+	elseif (not self.WidgetVisible and Widget:IsShown()) then
 		Widget:Hide()
 	end
 end
