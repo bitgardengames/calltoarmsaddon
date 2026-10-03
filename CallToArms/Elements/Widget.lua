@@ -391,6 +391,9 @@ function CTA:CreateWidget()
 	Close.Texture = CloseTexture
 
 	self.Widget = self
+	self.WidgetVisible = true
+	self.WidgetHiddenInGroup = false
+	self:UpdateGroupVisibility()
 end
 
 function CTA:ToggleWidget()
@@ -402,11 +405,18 @@ function CTA:ToggleWidget()
 		return
 	end
 
-	if Widget:IsShown() then
-		Widget:Hide()
-	else
+	-- Toggle the player's preference rather than the frame's current state. The
+	-- frame may already be hidden temporarily by the group visibility setting.
+	self.WidgetVisible = not self.WidgetVisible
+	self.WidgetHiddenInGroup = false
+
+	if self.WidgetVisible then
 		Widget:Show()
+	else
+		Widget:Hide()
 	end
+
+	self:UpdateGroupVisibility()
 end
 
 function CTA:UpdateGroupVisibility()
@@ -416,9 +426,23 @@ function CTA:UpdateGroupVisibility()
 		return
 	end
 
-	if self.Settings.HideInGroup and (IsInGroup() or IsInRaid()) then
+	local HideForGroup = self.Settings.HideInGroup and (IsInGroup() or IsInRaid())
+
+	if HideForGroup and self.WidgetVisible then
+		if Widget:IsShown() then
+			Widget:Hide()
+		end
+
+		self.WidgetHiddenInGroup = true
+	elseif self.WidgetHiddenInGroup then
+		-- Only undo a hide performed by this setting. A widget the player closed
+		-- manually should remain closed when leaving a group or disabling it.
+		self.WidgetHiddenInGroup = false
+
+		if self.WidgetVisible then
+			Widget:Show()
+		end
+	elseif not self.WidgetVisible and Widget:IsShown() then
 		Widget:Hide()
-	elseif (not Widget:IsShown()) then
-		Widget:Show()
 	end
 end
