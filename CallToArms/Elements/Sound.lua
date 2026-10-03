@@ -4,7 +4,7 @@ local CTA = AddOn.CTA
 local LastSoundTime = 0
 
 function CTA:PlaySound()
-    if not self.Settings.PlaySound then
+    if (not self.Settings.PlaySound) then
         return
     end
 
@@ -14,12 +14,11 @@ function CTA:PlaySound()
         return
     end
 
-    local SoundKey = self.Settings.AlertSound
-    local SoundPath = self.SharedMedia:Fetch("sound", SoundKey, true)
+    local SoundPath = self.SharedMedia:Fetch("sound", self.Settings.AlertSound, true)
 
     if SoundPath then
         PlaySoundFile(SoundPath, "Master")
+		
+		LastSoundTime = Now
     end
-
-    LastSoundTime = Now
 end
