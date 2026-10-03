@@ -103,7 +103,7 @@ local UpdateDungeonHeaderColor = function()
 	end
 
 	for key, header in next, CTA.RecycledHeaders do
-		header:SetBackdropColor(Font, 12, "")
+		header:SetBackdropColor(R, G, B)
 	end
 end
 
