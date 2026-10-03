@@ -1,0 +1,31 @@
+## Interface: 38002
+## Author: Hydra
+## Version: 2.20
+## Title: Call to Arms
+## Notes: Display active Call to Arms bonuses
+## SavedVariables: CallToArmsDB, CallToArmsFilters
+## IconTexture: Interface\Icons\inv_misc_bag_34
+
+Libraries\LibStub.lua
+Libraries\CallbackHandler-1.0.lua
+Libraries\LibDataBroker-1.1.lua
+Libraries\LibDBIcon-1.0.lua
+Libraries\LibSharedMedia-3.0.lua
+Libraries\ChatThrottleLib.lua
+Libraries\LibMotion.lua
+Elements\Initialize.lua
+Elements\Localization.lua
+Elements\Settings.lua
+Elements\Utils.lua
+Elements\Sound.lua
+Elements\Scan.lua
+Elements\Widget.lua
+Elements\GUI\Core.lua
+Elements\GUI\Widgets.lua
+Elements\GUI\SettingsPage.lua
+Elements\GUI\WidgetPage.lua
+Elements\GUI\DungeonsPage.lua
+Elements\GUI\HistoryPage.lua
+Elements\Broker.lua
+Elements\Version.lua
+Elements\Test.lua
