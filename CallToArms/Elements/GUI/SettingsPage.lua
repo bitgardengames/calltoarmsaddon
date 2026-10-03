@@ -6,10 +6,25 @@ local UpdateIgnoredRoles = function()
 	CTA:LFG_UPDATE_RANDOM_INFO()
 end
 
-local PreviewSound = function(value, key)
-	if key then
-		PlaySoundFile(key, "Master")
+local PreviewSound = function(value)
+	local SoundPath = CTA.SharedMedia:Fetch("sound", value, true)
+
+	if SoundPath then
+		PlaySoundFile(SoundPath, "Master")
 	end
+end
+
+local GetSoundSelections = function()
+	local Sounds = {}
+
+	-- Selection values are persisted, so store the LibSharedMedia key rather
+	-- than its file path. CTA:PlaySound can then resolve the selected key even
+	-- when another addon changes the registered path.
+	for SoundName in next, CTA.Sounds do
+		Sounds[SoundName] = SoundName
+	end
+
+	return Sounds
 end
 
 function CTA:CreateSettingsPage(page)
@@ -44,7 +59,7 @@ function CTA:CreateSettingsPage(page)
 	self:CreateCheckbox(RightWidgets, "PlaySound", L["Play Sound"], L["Play a sound when a bonus appears."], function() end)
 	
 	self:CreateHeader(RightWidgets, L["Alert Sound"])
-	self:CreateSelection(RightWidgets, "AlertSound", "", L["Choose which sound plays when a bonus appears."], CTA.Sounds, PreviewSound)
+	self:CreateSelection(RightWidgets, "AlertSound", "", L["Choose which sound plays when a bonus appears."], GetSoundSelections(), PreviewSound)
 
 	self:SortWidgets(LeftWidgets)
 	self:SortWidgets(RightWidgets)

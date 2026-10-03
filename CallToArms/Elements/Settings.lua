@@ -43,7 +43,7 @@ CTA.DefaultSettings = {
 	AnnounceStart = true,
 	AnnounceEnd = true,
 	PlaySound = true,
-	AlertSound = "Blizzard Raid Warning",
+	AlertSound = "CTA Beep 1",
 
 	Debug = false,
 }
